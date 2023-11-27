@@ -1,3 +1,4 @@
+const { log } = require('console');
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -8,6 +9,7 @@ app.use(express.json())
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
+
 
 // define routes
 // get request
@@ -20,6 +22,26 @@ app.get('/api/v1/tours', (req, res) => {
     },
   });
 });
+
+app.get('/api/v1/tours/:id', (req, res) => {
+
+  const id = req.params.id * 1
+  if(id > tours.length){
+    return res.status(400).json({
+      status:'fail',
+      message:`No tour with the ID of ${id}`
+      })
+  }
+
+  const tour = tours.find(el => el.id === id)
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour
+    }
+  })
+})
 
 // post request
 app.post('/api/v1/tours', (req, res) => {
