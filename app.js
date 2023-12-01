@@ -1,4 +1,3 @@
-const { log } = require('console');
 const express = require('express');
 const app = express();
 const fs = require('fs');
@@ -6,15 +5,27 @@ const fs = require('fs');
 // middleware => fuction that can modify incoming request data
 app.use(express.json());
 
+app.use((req, res,next) => {
+  console.log('hello from the console')
+  next()
+})
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString()
+  next()
+})
+
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
 );
 
 // route function 
 const getAllTours = (req, res) => {
+  console.log(req.requestTime)
   res.status(200).json({
     status: 'success',
     results: tours.length,
+    requestedAt: req.requestTime,
     data: {
       tours,
     },
@@ -91,13 +102,6 @@ const DeletTour = (req, res) => {
 }
 
 // define routes
-
-// app.get('/api/v1/tours', getAllTours);  
-// app.get('/api/v1/tours/:id', getTourById );   
-// app.post('/api/v1/tours', CreateTour );   
-// app.patch('/api/v1/tours/:id', UpdateTour ); 
-// app.delete('/api/v1/tours/:id', DeletTour )   
-
 app
   .route('/api/v1/tours')
   .get(getAllTours)   // get all tours request
