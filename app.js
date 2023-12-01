@@ -1,8 +1,11 @@
 const express = require('express');
-const app = express();
 const fs = require('fs');
+const morgan = require('morgan')
+
+const app = express();
 
 // middleware => fuction that can modify incoming request data
+app.use(morgan("dev")); // logs all requests to the console in a human-readable format
 app.use(express.json());
 
 app.use((req, res,next) => {
